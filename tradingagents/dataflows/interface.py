@@ -628,7 +628,7 @@ def get_YFin_data_window(
 def get_YFin_data_online(
     symbol: Annotated[str, "ticker symbol of the company"],
     start_date: Annotated[str, "Start date in yyyy-mm-dd format"],
-    end_date: Annotated[str, "Start date in yyyy-mm-dd format"],
+    end_date: Annotated[str, "End date in yyyy-mm-dd format"],
 ):
 
     datetime.strptime(start_date, "%Y-%m-%d")
@@ -670,7 +670,7 @@ def get_YFin_data_online(
 def get_YFin_data(
     symbol: Annotated[str, "ticker symbol of the company"],
     start_date: Annotated[str, "Start date in yyyy-mm-dd format"],
-    end_date: Annotated[str, "Start date in yyyy-mm-dd format"],
+    end_date: Annotated[str, "End date in yyyy-mm-dd format"],
 ) -> str:
     # read in data
     data = pd.read_csv(
@@ -703,17 +703,18 @@ def get_YFin_data(
 
 
 def get_stock_news_openai(ticker, curr_date):
-    client = OpenAI()
+    config = get_config()
+    client = OpenAI(base_url=config["backend_url"])
 
     response = client.responses.create(
-        model="gpt-4.1-mini",
+        model=config["quick_think_llm"],
         input=[
             {
                 "role": "system",
                 "content": [
                     {
                         "type": "input_text",
-                        "text": f"Can you search Social Media for {ticker} on TSLA from 7 days before {curr_date} to {curr_date}? Make sure you only get the data posted during that period.",
+                        "text": f"Can you search Social Media for {ticker} from 7 days before {curr_date} to {curr_date}? Make sure you only get the data posted during that period.",
                     }
                 ],
             }
@@ -737,10 +738,11 @@ def get_stock_news_openai(ticker, curr_date):
 
 
 def get_global_news_openai(curr_date):
-    client = OpenAI()
+    config = get_config()
+    client = OpenAI(base_url=config["backend_url"])
 
     response = client.responses.create(
-        model="gpt-4.1-mini",
+        model=config["quick_think_llm"],
         input=[
             {
                 "role": "system",
@@ -771,10 +773,11 @@ def get_global_news_openai(curr_date):
 
 
 def get_fundamentals_openai(ticker, curr_date):
-    client = OpenAI()
+    config = get_config()
+    client = OpenAI(base_url=config["backend_url"])
 
     response = client.responses.create(
-        model="gpt-4.1-mini",
+        model=config["quick_think_llm"],
         input=[
             {
                 "role": "system",
